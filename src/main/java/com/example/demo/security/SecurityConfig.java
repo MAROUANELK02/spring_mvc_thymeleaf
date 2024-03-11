@@ -28,8 +28,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.formLogin(AbstractAuthenticationFilterConfigurer::permitAll);
+        httpSecurity.formLogin(form -> form.loginPage("/login").permitAll());
         httpSecurity.authorizeHttpRequests(registry -> registry
+                .requestMatchers("/webjars/**").permitAll()
                 .requestMatchers("/user/**").hasRole("USER")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated());

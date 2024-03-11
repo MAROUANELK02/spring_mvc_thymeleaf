@@ -74,4 +74,9 @@ public class PatientController {
         return "redirect:/user/index";
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
 }
