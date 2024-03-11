@@ -3,6 +3,8 @@ package com.example.demo.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
@@ -13,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -31,9 +34,10 @@ public class SecurityConfig {
         httpSecurity.formLogin(form -> form.loginPage("/login").permitAll());
         httpSecurity.authorizeHttpRequests(registry -> registry
                 .requestMatchers("/webjars/**").permitAll()
-                .requestMatchers("/user/**").hasRole("USER")
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+//                .requestMatchers("/user/**").hasRole("USER")
+//                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated());
+        httpSecurity.rememberMe(Customizer.withDefaults());
         httpSecurity.exceptionHandling(exception -> exception.accessDeniedPage("/notAuthorized" ));
         return httpSecurity.build();
     }

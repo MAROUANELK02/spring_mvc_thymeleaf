@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,18 +34,21 @@ public class PatientController {
     }
 
     @GetMapping("/admin/delete")
-    public String delete(Long id, String keyword, int page) {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String delete(@RequestParam(name = "id") Long id, String keyword, int page) {
         patientRepository.deleteById(id);
         return "redirect:/user/index?page="+page+"&keyword="+keyword;
     }
 
     @GetMapping("/admin/formPatients")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String formPatient(Model model) {
         model.addAttribute("patient",new Patient());
         return "formPatients";
     }
 
     @PostMapping("/admin/save")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String save(Model model, @Valid Patient patient,
                        BindingResult bindingResult,
                        @RequestParam(name = "keyword", defaultValue = "") String keyword,
@@ -55,6 +59,7 @@ public class PatientController {
     }
 
     @GetMapping("/admin/editPatient")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String editPatient(Model model, Long id, String keyword, int page) {
         Patient patient = patientRepository.findById(id).orElse(null);
         if(patient == null) throw new RuntimeException("Patient not found");
